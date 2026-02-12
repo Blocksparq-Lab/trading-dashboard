@@ -1,0 +1,192 @@
+import os
+import sys
+import subprocess
+import json
+import re
+from datetime import datetime
+from openai import OpenAI
+
+def get_latest_video(channel_url):
+    try:
+        result = subprocess.run([
+            'yt-dlp', '--flat-playlist', '--dump-json',
+            '--playlist-end', '1', channel_url
+        ], capture_output=True, text=True, timeout=60)
+        
+        for line in result.stdout.strip().split('\n'):
+            if line:
+                try:
+                    data = json.loads(line)
+                    return {
+                        'title': data.get('title', ''),
+                        'url': f"https://www.youtube.com/watch?v={data['id']}",
+                        'upload_date': data.get('upload_date', '')
+                    }
+                except:
+                    continue
+        return None
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
+def get_transcript(video_url):
+    for f in ['/tmp/combined.en.vtt', '/tmp/combined.vtt']:
+        if os.path.exists(f):
+            os.remove(f)
+    
+    subprocess.run([
+        'yt-dlp', '--skip-download', '--write-auto-subs',
+        '--sub-langs', 'en', '--sub-format', 'vtt',
+        '--output', '/tmp/combined', video_url
+    ], capture_output=True, timeout=120)
+    
+    vtt_file = '/tmp/combined.en.vtt' if os.path.exists('/tmp/combined.en.vtt') else '/tmp/combined.vtt'
+    
+    if not os.path.exists(vtt_file):
+        return None
+    
+    with open(vtt_file, 'r', encoding='utf-8', errors='ignore') as f:
+        content = f.read()
+    
+    lines = []
+    for line in content.split('\n'):
+        line = line.strip()
+        if not line or '-->' in line or line.startswith('WEBVTT') or line.startswith('Kind:') or line.startswith('Language:'):
+            continue
+        line = re.sub(r'<[^>]+>', '', line)
+        if line:
+            lines.append(line)
+    
+    seen = set()
+    unique_lines = []
+    for line in lines:
+        if line not in seen:
+            seen.add(line)
+            unique_lines.append(line)
+    
+    return ' '.join(unique_lines)
+
+def normalize_prices(transcript):
+    def expand_k(match):
+        number = match.group(1)
+        if '.' in number:
+            return str(int(float(number) * 1000))
+        else:
+            return str(int(number) * 1000)
+    return re.sub(r'(\d+\.?\d*)\s*[Kk]\b', expand_k, transcript)
+
+def fetch_verified_investing():
+    print("Fetching Verified Investing...")
+    video = get_latest_video("https://www.youtube.com/@verifiedinvesting/videos")
+    if not video:
+        return None, "Could not fetch VI video"
+    
+    transcript = get_transcript(video['url'])
+    if not transcript:
+        return None, "No VI transcript"
+    
+    api_key = open(os.path.expanduser('~/.config/trading-ai/.env')).read().split('=')[1].strip()
+    client = OpenAI(api_key=api_key)
+    
+    response = client.chat.completions.create(
+        model='gpt-4o-mini',
+        messages=[{'role': 'user', 'content': f'Extract key trading setups. List: Tickers, entry levels, stops, targets, patterns, confidence. Transcript: {transcript[:6000]}'}],
+        max_tokens=800
+    )
+    
+    return {
+        'title': video['title'],
+        'analysis': response.choices[0].message.content
+    }, None
+
+def fetch_mitch_ray():
+    print("Fetching Mitch Ray...")
+    video = get_latest_video("https://www.youtube.com/@MitchRayTA/videos")
+    if not video:
+        return None, "Could not fetch MR video"
+    
+    transcript = get_transcript(video['url'])
+    if not transcript:
+        return None, "No MR transcript"
+    
+    normalized = normalize_prices(transcript)
+    
+    api_key = open(os.path.expanduser('~/.config/trading-ai/.env')).read().split('=')[1].strip()
+    client = OpenAI(api_key=api_key)
+    
+    response = client.chat.completions.create(
+        model='gpt-4o-mini',
+        messages=[{'role': 'user', 'content': f'Extract crypto setups. List: BTC/ETH/altcoins, levels, patterns, candlesticks, indicators, bias. Transcript: {normalized[:6000]}'}],
+        max_tokens=800
+    )
+    
+    return {
+        'title': video['title'],
+        'analysis': response.choices[0].message.content
+    }, None
+
+def synthesize(vi_data, mr_data):
+    api_key = open(os.path.expanduser('~/.config/trading-ai/.env')).read().split('=')[1].strip()
+    client = OpenAI(api_key=api_key)
+    
+    print("Synthesizing...")
+    
+    response = client.chat.completions.create(
+        model='gpt-4o-mini',
+        messages=[{'role': 'user', 'content': f"""Create ONE integrated trading plan for a West Coast trader (6:30-9:30 AM PT).
+
+VERIFIED INVESTING:
+{vi_data['analysis']}
+
+MITCH RAY:
+{mr_data['analysis']}
+
+SYNTHESIZE:
+
+PRE-MARKET BRIEFING ({datetime.now().strftime('%Y-%m-%d')})
+
+MARKET CONTEXT
+EQUITY SETUPS
+CRYPTO SETUPS
+RISK MANAGEMENT
+EXECUTION CHECKLIST
+KEY LEVELS"""}],
+        max_tokens=1500
+    )
+    
+    return response.choices[0].message.content
+
+if __name__ == '__main__':
+    print("="*60)
+    print("COMBINED TRADING BRIEFING")
+    print(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M PT')}")
+    print("="*60)
+    
+    vi_data, vi_error = fetch_verified_investing()
+    mr_data, mr_error = fetch_mitch_ray()
+    
+    if vi_error:
+        print(f"VI Error: {vi_error}")
+    if mr_error:
+        print(f"MR Error: {mr_error}")
+    
+    if not vi_data and not mr_data:
+        print("ERROR: No data")
+        sys.exit(1)
+    
+    if vi_data and mr_data:
+        final = synthesize(vi_data, mr_data)
+    elif vi_data:
+        final = f"VI ONLY:\n\n{vi_data['analysis']}"
+    else:
+        final = f"MR ONLY:\n\n{mr_data['analysis']}"
+    
+    print("\n" + "="*60)
+    print("FINAL TRADING PLAN")
+    print("="*60)
+    print(final)
+    print("="*60)
+    
+    with open(os.path.expanduser('~/trading-ai/latest_briefing.txt'), 'w') as f:
+        f.write(final)
+    print("\nSaved to ~/trading-ai/latest_briefing.txt")

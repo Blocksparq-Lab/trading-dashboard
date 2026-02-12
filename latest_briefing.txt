@@ -1,0 +1,74 @@
+# Integrated Trading Plan for West Coast Trader (6:30-9:30 AM PT)
+
+## Pre-Market Briefing for February 12, 2026
+
+### Market Context
+Global markets may be reacting to macroeconomic releases from the previous week, and technical indicators show notable compression in major indices such as the S&P 500 and NASDAQ. Traders should be alert to potential volatility during the morning session, especially given the critical resistance and support levels highlighted in recent analyses.
+
+### Equity Setups
+
+1. **S&P 500 (SPX)**
+   - **Entry Level:** Near $7,000 (considering short-side entries)
+   - **Stop Level:** Below recent low (close to $6,950 range; adjust based on actual price action)
+   - **Target Level:** Look for a pullback towards $6,800.
+   - **Comments:** Currently near the upper channel; RSI indicates potential weakness.
+
+2. **NASDAQ Composite (NASDAQ)**
+   - **Entry Level:** Monitor around $24,500 for bullish entries
+   - **Stop Level:** Below the trend line (~$24,400)
+   - **Target Level:** Resistance at $26,600 if it bounces.
+   - **Comments:** Watch for confirmation on trend line support.
+
+3. **Semiconductor ETF (SMH)**
+   - **Entry Level:** Current level close to $50 resistance (consider short positions)
+   - **Stop Level:** Just above current resistance (~$52)
+   - **Target Level:** First support at $45.
+   - **Comments:** Watch for profit-taking given the recent upward movements.
+
+4. **Dow Jones Transportation Average (DJT)**
+   - **Entry Level:** Current level (~20,500)
+   - **Stop Level:** Below recent support (~20,300)
+   - **Target Level:** Inverse head and shoulders target around 20,550.
+   - **Comments:** Daily topping tail suggests caution; still bullish longer-term.
+
+### Additional Equity Setups
+
+5. **OCL (Oracle)**
+   - **Entry Level:** Short position at $172.80
+   - **Stop Level:** Monitor levels (specific not provided)
+   - **Target Level:** Maintain support levels at $140.72.
+   - **Comments:** Resistance at current setup; strong historical respect.
+
+6. **LIT**
+   - **Entry Level:** Short position at $625.27
+   - **Stop Level:** Monitor upside to $646.44
+   - **Target Level:** Not specified, but relevant consolidations could provide insights.
+   - **Comments:** Medium confidence with current price action.
+
+### Cryptocurrency Setups
+Given the critical trading levels, adjust your focus to major cryptocurrencies.
+
+1. **BTC (Bitcoin)**
+   - **Focus Area:** Trade around $90,000-$110,000 consistent with critically established rules.
+   - **Stop Avoidance Levels:** If BTC trades lower than $1,026 and $1,105, recalibrate levels to $102,600 and $110,500.
+
+2. **ETH (Ethereum)**
+   - **Focus Area:** Trade between $2,000 - $3,000
+   - **Comments:** Look for potential buy signals approaching lower boundaries.
+
+### Risk Management
+- **Position Sizing:** Base your size on volatility and acceptable risk per strategy, ideally not exceeding 1-2% of your trading capital on any single trade.
+- **Trails:** Use trailing stops upon reaching certain levels to protect profits.
+
+### Execution Checklist
+- **Market Opening:** Be prepared for immediate volatility at the market open. Monitor news and adjust positions accordingly.
+- **Technical Analysis Verification:** Reassess critical price levels based on the opening swing and establish new stop-loss points if necessary.
+- **Record Keeping:** Document all entries, exits, and observations to refine strategy for future sessions.
+
+### Key Levels Summary
+- **S&P 500:** $7,000 resistance; $6,800 support target.
+- **NASDAQ:** $24,500 entry; $26,600 resistance.
+- **SMH:** Resistance around $50; target at $45 support.
+- **DJT:** 20,500 entry; target toward $20,550; protect downside positions.
+
+Prepare for a dynamic trading session by staying agile and responsive to real-time market conditions as established by the contexts provided in this trading plan.
